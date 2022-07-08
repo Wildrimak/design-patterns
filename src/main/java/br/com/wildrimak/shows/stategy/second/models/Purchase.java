@@ -33,4 +33,8 @@ public class Purchase {
     public double getSaleValue() {
         return this.stateStrategy.execute();
     }
+
+    public void setStateStrategy(StateStrategy stateStrategy) {
+        this.stateStrategy = stateStrategy;
+    }
 }
