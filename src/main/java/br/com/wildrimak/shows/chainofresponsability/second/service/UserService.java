@@ -1,7 +1,5 @@
 package br.com.wildrimak.shows.chainofresponsability.second.service;
 
-import br.com.wildrimak.shows.chainofresponsability.second.exceptions.AmountOfUpdatesException;
-import br.com.wildrimak.shows.chainofresponsability.second.exceptions.OverflowTimeException;
 import br.com.wildrimak.shows.chainofresponsability.second.handler.*;
 import br.com.wildrimak.shows.chainofresponsability.second.models.Role;
 import br.com.wildrimak.shows.chainofresponsability.second.models.User;
@@ -9,7 +7,6 @@ import br.com.wildrimak.shows.chainofresponsability.second.repository.UserReposi
 import br.com.wildrimak.shows.chainofresponsability.second.repository.UserRepositoryImpl;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 
 public class UserService {
 
@@ -25,13 +22,18 @@ public class UserService {
 
         UserHandler first = new ValidateNormalUserNameHandler();
         UserHandler second = new ValidatePremiumUserNameHandler();
-        UserHandler last = new StopHandler();
 
         first.setNextHandler(second);
-        second.setNextHandler(last);
+        var itsOk = first.handler(user);
 
-        first.handler(user);
-        return this.userRepository.save(user);
+        if(itsOk){
+            return this.userRepository.save(user);
+        }
+
+        throw new IllegalStateException("Your user is invalid! " +
+                "And for security reasons I can't tell you " +
+                "what's invalid.");
+
     }
 
     public User update(Long id, String name) {
@@ -43,30 +45,34 @@ public class UserService {
         updateUser.setRole(userSaved.getRole());
         updateUser.setAmountUpdates(userSaved.getAmountUpdates() + 1);
 
-        validateUpdateUser(updateUser);
+        var itsOk = validateUpdateUser(updateUser);
 
-        return this.userRepository.update(updateUser);
+        if(itsOk){
+            return this.userRepository.update(updateUser);
+        }
+
+        throw new IllegalStateException("Your user is invalid! " +
+                "And for security reasons I can't tell you " +
+                "what's invalid.");
+
     }
 
-    private void validateUpdateUser(User user) {
+    private boolean validateUpdateUser(User user) {
         var first = new ValidateNormalUserNameHandler();
         var second = new ValidatePremiumUserNameHandler();
         var third = new ValidateTimeBetweenChangesNormalUser();
         var fourth = new ValidateTimeBetweenChangesPremiumUser();
         var fifth = new ValidateAmountOfChangesNormalUser();
         var sixth = new ValidateAmountOfChangesPremiumUser();
-        var last = new StopHandler();
 
         first.setNextHandler(second);
         second.setNextHandler(third);
         third.setNextHandler(fourth);
         fourth.setNextHandler(fifth);
         fifth.setNextHandler(sixth);
-        sixth.setNextHandler(last);
 
-        first.handler(user);
+        return first.handler(user);
 
     }
-
 
 }

@@ -1,12 +1,11 @@
 package br.com.wildrimak.shows.chainofresponsability.second.handler;
 
-import br.com.wildrimak.shows.chainofresponsability.second.exceptions.OverflowTimeException;
 import br.com.wildrimak.shows.chainofresponsability.second.models.Role;
 import br.com.wildrimak.shows.chainofresponsability.second.models.User;
 
 import java.time.temporal.ChronoUnit;
 
-public class ValidateTimeBetweenChangesPremiumUser implements UserHandler{
+public class ValidateTimeBetweenChangesPremiumUser implements UserHandler {
 
     private UserHandler next;
 
@@ -16,17 +15,21 @@ public class ValidateTimeBetweenChangesPremiumUser implements UserHandler{
     }
 
     @Override
-    public void handler(User user) {
+    public boolean handler(User user) {
 
         var diff = ChronoUnit.MINUTES
                 .between(user.getCreationDate(), user.getUpdateAt());
 
-        if (user.getRole().equals(Role.PREMIUM)) {
-            if (diff >= 20) {
-                throw new OverflowTimeException("Change " +
-                        "only on the first twenty minutes!");
-            }
+        if (user.getRole().equals(Role.PREMIUM) &&
+                diff >= 20) {
+            return false;
         }
+
+        if (next != null) {
+            return this.next.handler(user);
+        }
+
+        return true;
 
     }
 }

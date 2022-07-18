@@ -1,10 +1,9 @@
 package br.com.wildrimak.shows.chainofresponsability.second.handler;
 
-import br.com.wildrimak.shows.chainofresponsability.second.exceptions.AmountOfUpdatesException;
 import br.com.wildrimak.shows.chainofresponsability.second.models.Role;
 import br.com.wildrimak.shows.chainofresponsability.second.models.User;
 
-public class ValidateAmountOfChangesNormalUser implements UserHandler{
+public class ValidateAmountOfChangesNormalUser implements UserHandler {
 
     private UserHandler next;
 
@@ -14,15 +13,17 @@ public class ValidateAmountOfChangesNormalUser implements UserHandler{
     }
 
     @Override
-    public void handler(User user) {
+    public boolean handler(User user) {
 
-        if (user.getRole().equals(Role.NORMAL)) {
-            if (user.getAmountUpdates() > 3) {
-                throw new AmountOfUpdatesException("Change only" +
-                        " 3 times in the first five minutes");
-            }
+        if (user.getRole().equals(Role.NORMAL) &&
+                user.getAmountUpdates() > 3) {
+            return false;
         }
 
-        this.next.handler(user);
+        if (next != null) {
+            return this.next.handler(user);
+        }
+
+        return true;
     }
 }
