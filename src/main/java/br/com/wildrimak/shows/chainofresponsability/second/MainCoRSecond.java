@@ -3,6 +3,8 @@ package br.com.wildrimak.shows.chainofresponsability.second;
 import br.com.wildrimak.shows.chainofresponsability.second.models.Role;
 import br.com.wildrimak.shows.chainofresponsability.second.service.UserService;
 
+import java.util.Arrays;
+
 public class MainCoRSecond {
 
     private static final UserService userService = new UserService();

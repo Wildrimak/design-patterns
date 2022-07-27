@@ -12,6 +12,15 @@ import java.util.stream.Collectors;
 public class MainLambda {
 
     public static void main(String[] args) {
+//
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println("print");
+//            }
+//        });
+//
+//        Thread t2 = new Thread(() -> System.out.println("print 2"));
 
         var numbers = Arrays.asList(1, 2, 3, 4);
         numbers.forEach(e -> System.out.println(e));
@@ -33,6 +42,40 @@ public class MainLambda {
 
         newNewNumbers.forEach(n -> System.out.println(n));
 
+    }
+
+    public static void amain(String[] args) {
+
+    }
+
+    interface Notifiable {
+        void send();
+    }
+
+    static class GenericNotifier implements Notifiable {
+
+        private Notifiable notifiable;
+
+        public GenericNotifier(Notifiable notifiable){
+            this.notifiable = notifiable;
+        }
+
+        @Override
+        public void send() {
+            this.notifiable.send();
+        }
+    }
+
+    static class WhatsappNotifier implements Notifiable {
+
+        @Override
+        public void send() {
+            Notifiable another = new WhatsappNotifier();
+            Notifiable anybody = new GenericNotifier(another);
+            GenericNotifier genericNotifier = new GenericNotifier(anybody);
+
+            System.out.println("send by whatsapp");
+        }
     }
 
 }

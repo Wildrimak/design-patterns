@@ -79,23 +79,23 @@ public class MainStreams {
 
         firstCase();
 
-        var result = mapToPerson();
-
-        var strings = result.stream()
-                .map(Person::getId)
-                .map(MainStreams::tryValidate)
-                .map(optional -> optional
-                        .map(string -> switch (string) {
-                            case "Well done!" -> string;
-                            case "Failed with IllegalArgumentException" -> "IAE";
-                            case "Failed with IllegalStateException" -> "ISE";
-                            case "Failed with IllegalCallerException" -> "ICE";
-                            default -> "None case";
-                        })
-                        .orElseThrow()
-                ).collect(Collectors.toList());
-
-        System.out.println(strings);
+//        var result = mapToPerson();
+//
+//        var strings = result.stream()
+//                .map(Person::getId)
+//                .map(MainStreams::tryValidate)
+//                .map(optional -> optional
+//                        .map(string -> switch (string) {
+//                            case "Well done!" -> string;
+//                            case "Failed with IllegalArgumentException" -> "IAE";
+//                            case "Failed with IllegalStateException" -> "ISE";
+//                            case "Failed with IllegalCallerException" -> "ICE";
+//                            default -> "None case";
+//                        })
+//                        .orElseThrow()
+//                ).collect(Collectors.toList());
+//
+//        System.out.println(strings);
     }
 
     static Optional<String> tryValidate(int value) {
