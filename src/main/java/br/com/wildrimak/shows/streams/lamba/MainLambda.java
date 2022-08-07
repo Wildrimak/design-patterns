@@ -44,38 +44,4 @@ public class MainLambda {
 
     }
 
-    public static void amain(String[] args) {
-
-    }
-
-    interface Notifiable {
-        void send();
-    }
-
-    static class GenericNotifier implements Notifiable {
-
-        private Notifiable notifiable;
-
-        public GenericNotifier(Notifiable notifiable){
-            this.notifiable = notifiable;
-        }
-
-        @Override
-        public void send() {
-            this.notifiable.send();
-        }
-    }
-
-    static class WhatsappNotifier implements Notifiable {
-
-        @Override
-        public void send() {
-            Notifiable another = new WhatsappNotifier();
-            Notifiable anybody = new GenericNotifier(another);
-            GenericNotifier genericNotifier = new GenericNotifier(anybody);
-
-            System.out.println("send by whatsapp");
-        }
-    }
-
 }
